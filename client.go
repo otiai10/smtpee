@@ -23,22 +23,38 @@ func Dial(addr string) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Client{Client: *c}, err
+	return &Client{Client: *c, To: []string{}}, err
+}
+
+// SetFrom ...
+func (c *Client) SetFrom(from string) *Client {
+	c.From = from
+	return c
+}
+
+// AddTo ...
+func (c *Client) AddTo(to ...string) *Client {
+	c.To = append(c.To, to...)
+	return c
 }
 
 // Send ...
 func (c *Client) Send(body string) error {
 
-	data := bytes.NewBuffer([]byte{})
+	// From
 	c.Mail(c.From)
-	data.WriteString("To:" + c.From + rn)
+
+	// To
+	data := bytes.NewBuffer([]byte{})
 	for _, to := range c.To {
 		c.Rcpt(to)
-		data.WriteString("Cc:" + to + rn)
+		data.WriteString("To:" + to + rn)
 	}
 
+	// Subject
 	data.WriteString("Subject:" + c.Subject + rn)
 
+	// Body
 	data.WriteString(body)
 
 	wc, err := c.Data()
