@@ -12,8 +12,8 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	c.SetFrom("Hiromu <hiromu+sender@origami.co>")
-	c.AddTo("otiai10+recipient@gmail.com", "hiromu@origami.co")
+	c.SetFrom("otiai10+sender@gmail.com")
+	c.AddTo("otiai10+recipient02@gmail.com", "otiai10+recipient01@gmail.com")
 	c.Subject = "元気ですか？"
 
 	c.Send("はらへった\nなんか食わせろ")
