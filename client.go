@@ -30,10 +30,10 @@ func Dial(addr string) (*Client, error) {
 func (c *Client) Send(body string) error {
 
 	data := bytes.NewBuffer([]byte{})
-	c.Mail(c.From) // メールの送り主を指定
+	c.Mail(c.From)
 	data.WriteString("To:" + c.From + rn)
 	for _, to := range c.To {
-		c.Rcpt(to) // Ccにしたい場合も同様に指定
+		c.Rcpt(to)
 		data.WriteString("Cc:" + to + rn)
 	}
 
