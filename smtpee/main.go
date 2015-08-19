@@ -7,14 +7,17 @@ import (
 )
 
 func main() {
-	c, err := smtpee.Dial("localhost:25")
-	if err != nil {
-		log.Fatalln(err)
+
+	c := smtpee.Client{
+		Addr: "localhost:25",
+		From: "otiai10@otiai10.com",
+		To: []string{
+			"otiai10@gmail.com",
+		},
+		Subject: "MacのSMTPのテスト",
 	}
 
-	c.SetFrom("otiai10+sender@gmail.com")
-	c.AddTo("otiai10+recipient02@gmail.com", "otiai10+recipient01@gmail.com")
-	c.Subject = "元気ですか？"
+	err := c.Send("はらへった\nなんか食わせろ")
 
-	c.Send("はらへった\nなんか食わせろ")
+	log.Println(err)
 }

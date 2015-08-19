@@ -11,43 +11,28 @@ const (
 
 // Client ...
 type Client struct {
-	smtp.Client
+	Addr    string
 	From    string
 	To      []string
 	Subject string
 }
 
-// Dial ...
-func Dial(addr string) (*Client, error) {
-	c, err := smtp.Dial(addr)
-	if err != nil {
-		return nil, err
-	}
-	return &Client{Client: *c, To: []string{}}, err
-}
-
-// SetFrom ...
-func (c *Client) SetFrom(from string) *Client {
-	c.From = from
-	return c
-}
-
-// AddTo ...
-func (c *Client) AddTo(to ...string) *Client {
-	c.To = append(c.To, to...)
-	return c
-}
-
 // Send ...
 func (c *Client) Send(body string) error {
 
+	// smtp client
+	sc, err := smtp.Dial(c.Addr)
+	if err != nil {
+		return err
+	}
+
 	// From
-	c.Mail(c.From)
+	sc.Mail(c.From)
 
 	// To
 	data := bytes.NewBuffer([]byte{})
 	for _, to := range c.To {
-		c.Rcpt(to)
+		sc.Rcpt(to)
 		data.WriteString("To:" + to + rn)
 	}
 
@@ -57,15 +42,15 @@ func (c *Client) Send(body string) error {
 	// Body
 	data.WriteString(body)
 
-	wc, err := c.Data()
+	w, err := sc.Data()
 	if err != nil {
 		return err
 	}
-	defer wc.Close()
+	defer w.Close()
 
-	if _, err = data.WriteTo(wc); err != nil {
+	if _, err = data.WriteTo(w); err != nil {
 		return err
 	}
 
-	return c.Quit()
+	return sc.Quit()
 }
